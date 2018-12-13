@@ -102,7 +102,7 @@ Je vais monter le HDD dans un /media/aurelien/... et lier les différents dossie
 I am also putting the /tmp on a tmpfs of 512M running on the RAM to remove wear on the SSD
 I added the following line of code in the /etc/fstab :
 
-tmpfs                                     /tmp            tmpfs   defaults,noatime;nosuid,nodev,noexec,mode=1777,size=512M              0       0
+tmpfs                                     /tmp            tmpfs   defaults,noatime,nosuid,nodev,noexec,mode=1777,size=512M              0       0
 
 ### Swapiness:
 
