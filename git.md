@@ -1,3 +1,11 @@
+# Firts set-up on new PC:
+
+If I don't copy the ~/.gitconfig file, I need to set up my email, username... to do so use:
+`git config --list` will list the different config parameters
+`git config --global user.name "user_name"`
+`git config --global user.email "email@email.com"
+
+
 1. Create a new repository on GitHub. To avoid errors, do not initialize the new repository with README, license, or gitignore files. You can add these files after your project has been pushed to GitHub.
 
 2. Open Terminal.
