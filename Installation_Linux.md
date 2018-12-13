@@ -89,6 +89,21 @@ de mise en marche.
 
 ##Après l'installation:
 
+### HardDrive + SSD set up:
+
+J'ai un SSd et un HDD pour gérer les emplacements des disques et leur mapping, utiliser le /etc/fstab
+ pour monter les disques. Utiliser `sudo blkid /dev/...` pour retrouver les infos sur les disques.
+J'ai remarqé que mettre tout le /home sur le HDD semble provoquer des ralentissements lorsque les
+différentes applications entrent en compétition pour accéder à leurs fichiers de configurations...
+Ma solution possible est de toujours avoir le /home sur le SSD mais de mettre les documents, images...
+sur le HDD.
+Je vais monter le HDD dans un /media/aurelien/... et lier les différents dossier.
+
+I am also putting the /tmp on a tmpfs of 512M running on the RAM to remove wear on the SSD
+I added the following line of code in the /etc/fstab :
+
+tmpfs                                     /tmp            tmpfs   defaults,noatime;nosuid,nodev,noexec,mode=1777,size=512M              0       0
+
 ### Swapiness:
 
 Il est important de changer la swapiness de 60 à 10 (ou moins). la swapiness correspond à la proportion du 
