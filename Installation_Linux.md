@@ -99,6 +99,12 @@ Ma solution possible est de toujours avoir le /home sur le SSD mais de mettre le
 sur le HDD.
 Je vais monter le HDD dans un /media/aurelien/... et lier les différents dossier.
 
+I can link directory, /!\ need an output link that doesn't exist before the ln -s command:
+
+   ```$ln -s /original/directory/ /expected/link/place```
+
+The */original/directory/* can also be written */original/directory*
+
 I am also putting the /tmp on a tmpfs of 512M running on the RAM to remove wear on the SSD
 I added the following line of code in the /etc/fstab :
 
@@ -298,7 +304,9 @@ try to change the default hardware profile in pavucontrol to "duplex"
 
 ### Snaps:
 
-these apps are installed in a  ~/snap/... directory.
+these apps are installed in a  /snap/... directory.
+These apps will put user specific data in ~/snap/...
+If anything along the path /hom/user/snap/... is a link, the apparmor profile will prevent the snapped apps to work.
 To manage there permission, look at the documentation on the snapcraft website.
 look into the snap interfaces ... and the snap connect ... commands to manage it.
 
