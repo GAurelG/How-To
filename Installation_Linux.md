@@ -247,7 +247,7 @@ Pour transférer Evolution d'un ordinateur à un autre il faut utiliser le plugi
 ### SSH:
 
 enplacement personnel des info ssh: /home/aurelien/.ssh/
-créer un clée: ssh-keygen -t rsa -C "email@email.com"
+créer un clée: ssh-keygen -t rsa -C "username@address.server.something"
 elle sera sauvegardée sous: /home/aurelien/.ssh/id_rsa	et id_rsa.pub
 on peut avoir plusieurs clé ssh, pour cela, les enregistrer sous d'autres nom de fichier.
 La clé privvée est personnelle et doit être conservée et pas partagée.
@@ -276,6 +276,12 @@ Host nomd'hôte
  HostName bitbucket.org
  User git
  IdentityFile ~/.ssh/id_rsa_bibucket
+
+to add a key to the ssh-agent (for example if it was newly created and you have to copy it
+from another location because you type the wrong path like a stupid person):
+
+    ```$ssh-add /path/to/ssh/id_rsa...```
+
 
 On se connecte en faisant: ssh -T git@nomd'hôte
 A voir comment ça fonctionne correctement!
