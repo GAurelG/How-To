@@ -282,6 +282,11 @@ from another location because you type the wrong path like a stupid person):
 
     ```$ssh-add /path/to/ssh/id_rsa...```
 
+Once I created the new key on another computer, i copied the id_rsa.pub file
+containing the public ssh key to the computer that ad the ssh access already set up.
+I then ran the ssh-copy-id command, but got an error because the key wasn't created on the 
+computer so I had to use the -f (for force) option. it worked well.
+    ```ssh-copy-id -f -i /path/to/key user@hostname```
 
 On se connecte en faisant: ssh -T git@nomd'hôte
 A voir comment ça fonctionne correctement!
