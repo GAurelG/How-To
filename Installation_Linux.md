@@ -281,6 +281,11 @@ On se connecte en faisant: ssh -T git@nomd'hôte
 A voir comment ça fonctionne correctement!
 A voir comment on détermine le User dans le fichier!
 
+To remove older hosts, one need to know their host name (what was used in the ssh command).
+then you can use the command:
+    ```ssh-keygen -R hostname [-f filenameOfKnownHosts]```
+I also removed the id_rsa.. public and private keys.
+
 ### Pulseaudio
 
 Pour avoir une bonne maitrise du son de pulseaudio, installer pavu-control
