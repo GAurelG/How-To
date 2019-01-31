@@ -3,6 +3,26 @@ To start I will mainly have extra t from their wonderful website.
 I will probably make some kind of a summary at the end, but the main documents is basically copy/paste from the tarsnap website.
 
 # Summary 
+
+- download and install the tarsnap client
+- estimate the quantity that the backup will take to estimate costs:
+    $ tarsnap --dry-run --no-default-config --print-stats --humanize-numbers -c /MY/DATADIR
+- check the configuration file located in (by default): 
+        /etc/tarsnap.conf
+- Sign up for a tarsnap account, see their website 
+- put money on the account (minimum 5$)
+- register the machine with the server:
+
+    $ sudo tarsnap-keygen \
+    	--keyfile /root/tarsnap.key \
+    	--user me@example.com \
+    	--machine mybox
+
+- Store your **/root/tarsnap.key** somewhere safe.
+    ***If you lose tarsnap.key, you will not be able to access your archived data.***
+- make the backup (see docs below, they wrote them well on the tarsnap website)
+- test the backup
+
 # install the tarsnap client and make the initial configuration
 
 1. Install tarsnap using one of the Deb they have on their website
