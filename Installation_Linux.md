@@ -430,6 +430,14 @@ installer:
 
 On peut utiliser un tmpfs grâce au fstab(apparement sur archlinux c'est par défaut. Je ne le fait pas 
 sur le gros ordi au début, ça va utiliser de la RAM et j'ai la flemme. On verra comment ça évolue.
+I could also use a tmpsfs for other directory. see the askubuntu "how can I use ram
+storage for the tmp directory and how to set a maximum to it".
+The row in the fstab would be:
+`tmpfs /tmp tmpfs defaults,noatime,nosuid,nodev,noexec,mode=1777,size=512M 0 0`
+
+The size argument is making the limit for the tmpfs filesystem. I probably would 
+need to put several GB, but need a bit more RAM.
+
 
 ### mots de passe:
 
@@ -462,6 +470,12 @@ Ajouter les polices microsoft et autres polices
 
 To make telegram start at boot in tray, add to the ~/.config/autostart/ (for freedesktop compliant
  desktop) the telegramdesktop.desktop file. And the Exec command should be `Telegram -startintray` 
+
+### Steam:
+
+The steam client has a support for 4K but you have to find the option in menu:
+
+steam > option > interface > "enlarge text and icons based on monitor szie"
 
 ### Gestion des sauvegardes:
 

@@ -177,4 +177,16 @@ This allows you to create a write-only key (without a passphrase) which is used 
 
 If you want to keep your full keys on a different (more secure) system and only use them there, or use keys on multiple systems for any other reason, things get more complicated.
 
+# Backup Nextcloud:
+
+To backup Nextcloud, I need to backup the data in /var/snap/nextcloud, specifically:
+
+- `$SNAP_DATA` -> `/var/snap/nextcloud/current`
+- `$SNAP_COMMON` -> `/var/snap/nextcloud/common/`
+
+To restore a backup, install nextcloud normally, snap stop nextcloud,
+copy back the data in the places they belong to and restart (at least 
+restart nextcloud). If the IP address is the same, it should all work 
+easily again, if not, we need to configure again the DNS to point to
+the good ip address.
 
