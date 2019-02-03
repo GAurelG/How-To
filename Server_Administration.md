@@ -120,6 +120,32 @@ These by default point to:
 these information can also be retrieved (and even changed) by looking/editing the file:
 `/var/snap/nextcloud/current/nextcloud/config/config.php`
 
+Additional information about snap packages, they are squashfs images stored in `/var/lib/snapd/snaps/` and mounted in `/snaps`.
+
+To correct my mistakes, I did (using sudo when appropriate):
+
+- `cp /etc/fstab /etc/fstab.old_V1`
+- `mkdir /media/volume1`
+- edit fstab to mount volume on /media/volume1
+- `mkdir /home/cloud_bckup`
+- `cp /var/snap/nextcloud/* /home/cloud_bckup/` # it saves the config and data from my nextcloud install
+- restart the server. If everything wen well, the server started, but we fucked up the snapd install
+- to clear the mess, I `apt purge snapd` then `apt install snapd` to reinstall snapd cleanly
+- I `sudo snap install nextcloud`
+- `sudo snap stop nextcloud` to ensure that nothing happens before I put back all the config.
+- `rm -r /media/volume1/*` to clean the volume now mounted in /media/volume1
+- `ls -l /media/volume1` to check that we actually cleaned it
+- `cp /home/cloud_bckup /media/volume1/` to put the data and config on the external volume (as wished)
+- save the actual fstab as fstab.old_2 and edit the fstab to mount the volume in `/var/snap/nextcloud`
+- `rm -r /var/snap/nextcloud/*` to clean the config and other things that the new nextcloud install created.
+- restart the server and if everything went ok:
+    + the server should start
+    + the volume should be mounted at `/var/snap/nextcloud` (can check by touching a file in there and
+looking if it is also created in /mnt/... (the volume /mnt place)
+    + if we tyr to connect to nextcloud, we should see the custom login page, the file should be there and
+no warnings should appear (https should also work directly)
+- `rm -r /home/cloud_bckup` because we don't need a copy of it anymore now.
+
 I will also need to create an alert in the digital Ocean dashboard to send me an info when
 the storage on the block runs low
 
@@ -148,7 +174,7 @@ I will follow the documentation provided by Digital Ocean to install a snap of N
        # other number to place the domains in different order
     ```
 
-I will now configure an ssk certificate using lets encrypt. there is a script already 
+I will now configure an ssh certificate using lets encrypt. there is a script already 
 available in nextcloud.
 
     ```

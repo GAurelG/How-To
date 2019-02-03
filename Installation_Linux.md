@@ -267,7 +267,9 @@ Ensuite mettre la clé publique correspondant à chaque service à utiliser.
 Il faut ensuite créer le fichier: /home/aurelien/.ssh/config 
 exemple de remplissage pour github et bitbucket:
 
-Host nomd'hôte
+Host nomd'hôte  
+#hostname will be used to complete the ssh command, can be anything we want (but no user@ in it)
+#can put several synonyme if we separate them with space. Can also use wildcards
  HostName github.com
  User git
  IdentityFile ~/.ssh/id_rsa_github
@@ -277,10 +279,15 @@ Host nomd'hôte
  User git
  IdentityFile ~/.ssh/id_rsa_bibucket
 
+doing so, allow us to use ssh nomd'hote instead of ssh user@HostName. 
+
 to add a key to the ssh-agent (for example if it was newly created and you have to copy it
 from another location because you type the wrong path like a stupid person):
 
     ```$ssh-add /path/to/ssh/id_rsa...```
+
+In my case it didn't add the key permanently to the user agent, so I had to add the host in the 
+.ssh/config file (like explained previously).
 
 Once I created the new key on another computer, i copied the id_rsa.pub file
 containing the public ssh key to the computer that ad the ssh access already set up.
