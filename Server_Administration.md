@@ -104,7 +104,22 @@ In the mean time i will need to continue using the ip address.
 
 I want to add a block storage to the droplet to install nextcloud on it and thus allow the 
 document storage to grow with usage.
-I will install the storage and configure the /etc/fstab to mount it at boot on ~/.snap
+I will install the storage and configure the /etc/fstab to mount it at boot on /snap
+That is what I did and the problem I found when trying to backup, is that nextcloud is using another location for data and configuration. By defalut we can find where they are located by looking at the environment variable:
+
+`$SNAP` for the nextcloud software app data
+`$SNAP_DATA` for the apache/PHP/MySQL/Redis logs, keys and certificates, NySQL database, Redis Database, Nextcloud config, nextcloud apps
+
+`$SNAP_COMMON` contains the user data and nextcloud logs
+
+These by default point to:
+- `$SNAP` -> `/snap/nextcloud/current/`
+- `$SNAP_DATA` -> `/var/snap/nextcloud/current`
+- `$SNAP_COMMON` -> `/var/snap/nextcloud/common/`
+
+these information can also be retrieved (and even changed) by looking/editing the file:
+`/var/snap/nextcloud/current/nextcloud/config/config.php`
+
 I will also need to create an alert in the digital Ocean dashboard to send me an info when
 the storage on the block runs low
 
