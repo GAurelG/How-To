@@ -91,6 +91,44 @@ to do so:
 
 I could look at X forwarding, but for the base config I don't need it.
 
+#### SSH reverse tunneling
+
+- I can use reverse tunneling to send information back from the remote server to my PC. This will be useful to avoid having to configure the home router, and also to avoid problems in case my home IP adfdress changes.
+
+- To use the reverse tunneling, I need ssh-server installed on both machine.
+- It is recommanded to ssh back to a restrained user.
+- I found a good explaination:  https://unix.stackexchange.com/questions/46235/how-does-reverse-ssh-tunneling-work
+    Basically with the reverse tunneling, we ask ssh to create a pipe in the bigger ssh connection pipe.
+    the inside pipe needs to have a start and an end, we specify the direction of the data transfert in the 
+insider pipe by using the -L (for data transfert starting on the client and going to the server = like general
+ssh connection). the -R makes a reverse connection (from the "server" to the "client").
+
+to do the reverse tunneling, one need to set-up the option on the remote host(in in /etc/ssh/sshd_config):
+- AllowTcpForwarding yes  
+- GatewayPort no # this allows only connection from server machine on itself
+
+the command on the client to start the ssh connection is:
+```userC@client$ ssh -R 22345:localhost:22 userS@server```
+
+One danger of that if I don't specify the GatewayPort on the sshd config of the server (?) is that basically
+anyone connecting to the server on the specified port could be binded to local port 22. this can be a security risk.
+more info about ssh tunneling:
+https://www.ssh.com/ssh/tunneling/example
+https://chamibuddhika.wordpress.com/2012/03/21/ssh-tunnelling-explained/
+# the chamibuddhika.wordpress is a really goo document, I need to get it as a PDF for offline reference.
+# see the [reference_pdf](SSH_tunneling_nice_reference.pdf)
+
+this tells SSH to link the port 22345 (can be any port between 1024 and 65535 not used) on the remote to
+the port on localhost (the client) 22, so the ssh port of the local machine.
+After the successful connection, we can initiate the connection from the server (even witin the first
+ssh session) to itself on the specified port and ssh will forward it to the port 22 on the local machine.
+```userS@server$ ssh -p 22345 userC@localhost```
+
+Other SSH options:
+- -f tells ssh to background itself to avoid having to run stuffs through it to keep the connection alive
+- -N tells that we don't want to run any remote commands, save ressources
+- -T disable pseudo tty allocation = do not create interactive shell
+
 Digital Ocean as a really nice guide on ssh lok for "digital ocean, ssh essential guide"
 
 ### I have a domain name:
@@ -174,7 +212,7 @@ I will follow the documentation provided by Digital Ocean to install a snap of N
        # other number to place the domains in different order
     ```
 
-I will now configure an ssh certificate using lets encrypt. there is a script already 
+I will now configure an ssl certificate using lets encrypt. there is a script already 
 available in nextcloud.
 
     ```

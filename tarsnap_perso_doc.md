@@ -2,6 +2,10 @@ I will try to write my tarsnap doc here first.
 To start I will mainly have extra t from their wonderful website.
 I will probably make some kind of a summary at the end, but the main documents is basically copy/paste from the tarsnap website.
 
+# Comments:
+
+I have decided not to use tarsnap with my servers for now, it would cost me between 3 to 10€ per month for only part of my data. And I also want Fiona to be able to store things on it. I already have possibilities to do backups at home so I don't see the point in paying for an outside service. I was also thinking to only use the Tarsnap service to save really important documents.
+
 # Summary 
 
 - download and install the tarsnap client
