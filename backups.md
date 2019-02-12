@@ -95,6 +95,11 @@ necessary to remove backups
 
     - --encrypt-key to use the GpG encryption.
 
+I will use a reverse tunneling from the raspberry pi on the server and make it trigger a backup script.
 
 I will have to manage to send emails once the script is finished to 
 inform myself in case of a problem.
+
+## Raspberry pi set-up
+
+
