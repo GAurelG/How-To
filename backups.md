@@ -102,4 +102,36 @@ inform myself in case of a problem.
 
 ## Raspberry pi set-up
 
+I choose raspbian lite as a base, did the normal installation. I decided to use
+ the graphical set-up tool to expand the partition to the full SD card and also
+ to set up the keyoard to french layout. I tried to look around a bit, but it 
+was taking some time and not really successful at the time.
 
+Once the card is fully set-up, I should do a img of the card so that I can
+restore the raspberrypi fast in case of SD card failure.
+I could also look into making an ansible playbook or similar type of configuration
+ management tool.
+
+Steps done on the pi:
+    - change default password
+    - create another user
+    - set-up ufw firewall
+    - install SSH server
+    - set-up ssh connection using key from different machines
+    - create a new user only for backups, without sudo rights
+    - create an ssh key for this user
+    - upload the key on the server to make the autentication possible
+
+## Server set-up
+
+ I created a new user to do the backup. It is an account without home or
+administrative rights.
+
+Steps done:
+    - `sudo adduser --no-create-home save-user` this creates a new user and
+ group without home
+    - `sudo usermod -a -G save-user myUser` this adds (-a) the group (-G)
+save-user to my main user.
+    - `sudo chgrp -Rv save-user /var/snap/nextcloud` this change the group 
+of belonging of /var/snap/nextcloud. The group rights are read only.
+    
