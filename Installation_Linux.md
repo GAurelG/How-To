@@ -490,4 +490,33 @@ Les choses à Sauvegarder:
   
 - linux:
   + /home (on peut jeter un certain nombre de choses mais en première approche)
-  + faire une liste 
+  + faire une liste
+  
+### Syncthing:
+
+[Official documentation](https://docs.syncthing.net/intro/gui.html)
+
+When you connect two devices for the first time, you need to restart syncthing 
+on both machines for the changes to take effect.
+
+    `sudo ufw allow syncthing`
+Rules for allowing syncthing using ufw. for more specific information look at the 
+official documentation.
+     
+Port forwarding to access the web interface on a remote machine pointing the browser to
+*http://localhost:9999/#*
+     `ssh -L 9999:localhost:8384 machine`
+     
+Automatically start syncthing for user at system boot:
+
+    `systemctl enable syncthing@myuser.service`
+    `systemctl start syncthing@myuser.service`
+
+this is the standard web server address: 
+`http://localhost:8384/`
+
+The `.stignore` file is the file where you can specify which files not to synchronise.
+
+To run a web Gui of syncthing, run: `syncthing -browser-only`
+
+
