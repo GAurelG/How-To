@@ -1,8 +1,10 @@
-# TLP:
+# For micraurel
+
+## TLP:
 
 J'ai masqué systemd-rfkill.service (sudo systemd-rfkill.service) pour éviter tout conflit entre rfkill et tlp. voir archwiki TLP. Lors désinstallation de TLP démasquer le service.
 
-# erreur Alsaclt restore at boot:
+## erreur Alsaclt restore at boot:
 
 erreur: process /usr/bin/alsactl restore 0 failed exit code 99
 

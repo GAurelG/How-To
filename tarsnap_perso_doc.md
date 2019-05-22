@@ -1,10 +1,12 @@
-I will try to write my tarsnap doc here first.
-To start I will mainly have extra t from their wonderful website.
-I will probably make some kind of a summary at the end, but the main documents is basically copy/paste from the tarsnap website.
+This documentation has been gathered during my evaluation of the tarsnap tools for my personal use.
+I finally decided not to use tarsnap for my normal backups as I did not evaluate my data to be worth the cost of the service.
+The tarsnap service is a really good offer but overdimensioned for my needs, and I was also able to learn new things while implementing a local solution.
+
+This doc is mostly a copy of the informations one can find on the [tarsnap website](https://www.tarsnap.com/) 
 
 # Comments:
 
-I have decided not to use tarsnap with my servers for now, it would cost me between 3 to 10€ per month for only part of my data. And I also want Fiona to be able to store things on it. I already have possibilities to do backups at home so I don't see the point in paying for an outside service. I was also thinking to only use the Tarsnap service to save really important documents.
+I have decided not to use tarsnap with my servers for now, it would cost me between 3 to 10€ per month for only part of my data. And I also want to provide Nextcloud storage for family and that could increase the bill quite fast for data that would mainly not be critical to save in nextcloud as other backup strategy are taken for these other datasets. I was also thinking to only use the Tarsnap service to save really important documents.
 
 # Summary 
 
@@ -180,17 +182,4 @@ tarsnap-keymgmt --outkeyfile write-only-key.txt -w ~/tarsnap-main-key-file.txt
 This allows you to create a write-only key (without a passphrase) which is used to create archives automatically, and a key with more permissions (requiring a passphrase) which is used for restoring or deleting archives. In this system, if an intruder breaks into your server, she would be able to halt your backups (or add new archives with faulty data), but not delete your existing archives.
 
 If you want to keep your full keys on a different (more secure) system and only use them there, or use keys on multiple systems for any other reason, things get more complicated.
-
-# Backup Nextcloud:
-
-To backup Nextcloud, I need to backup the data in /var/snap/nextcloud, specifically:
-
-- `$SNAP_DATA` -> `/var/snap/nextcloud/current`
-- `$SNAP_COMMON` -> `/var/snap/nextcloud/common/`
-
-To restore a backup, install nextcloud normally, snap stop nextcloud,
-copy back the data in the places they belong to and restart (at least 
-restart nextcloud). If the IP address is the same, it should all work 
-easily again, if not, we need to configure again the DNS to point to
-the good ip address.
 

@@ -131,6 +131,11 @@ Other SSH options:
 
 Digital Ocean as a really nice guide on ssh lok for "digital ocean, ssh essential guide"
 
+#### Two factor autentication with ssh:
+
+a method to use google authenticator (TOTP) with ssh connection can be found at the [following link](https://sysconfig.org.uk/two-factor-authentication-with-ssh.html)
+It seems quite easy to implement.
+
 ### I have a domain name:
 
 I decided to use the gandi interface to redirect part of my domain name to the server.

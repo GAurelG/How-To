@@ -304,6 +304,53 @@ then you can use the command:
     ```ssh-keygen -R hostname [-f filenameOfKnownHosts]```
 I also removed the id_rsa.. public and private keys.
 
+### sshfs
+
+For the backups I discovered sshfs. You need to have 
+
+### Kdump
+
+Kdump is a tool to capture kernel logs when we enter crashes. I tried it for my Ryzen system as it sometimes had some problems.
+I wasn't able to get any logs, maybe my problems were different (powersuply cable...) or one of the ryzen C-state (C6) bug.
+
+on Ubuntu based system:
+
+-install: `sudo apt install linux-crashdump`
+- during the install process we will be asked if kdump should be enabled by default (we want to answer yes)
+- if we missed it, we can run `dpkg-reconfigure kdump-tools` to get asked again.
+- check that crashdump is enabled: `cat /proc/cmdline` we should see a "crashkernel=..." option enabled.
+- check that the kernel is reserving memory area for kdump : `dmesg | grep -i crash`
+
+[good link](https://www.thegeekstuff.com/2014/05/kdump/)
+[link](https://github.com/r4m0n/ZenStates-Linux) to a tool for disabeling C6 states on ryzen.
+need to use `sudo modprob cpuid msr` as kernel modules to use.
+then run `./zenstates.py --c6-disable`
+
+to run at boot, create a systemd service in /etc/systemd/system:
+
+```
+[Unit]
+Description=Ryzen Disable C6
+DefaultDependencies=no
+After=sysinit.target local-fs.target
+Before=basic.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/disable_c6
+
+[Install]
+WantedBy=basic.target
+```
+
+We need to create the executable:
+
+```
+#!/bin/sh
+zenstates.py --c6-disable
+```
+[source](https://forum.manjaro.org/t/ryzen-freezes-possible-solution-related-to-c6-state/37870)
+
 ### Pulseaudio
 
 Pour avoir une bonne maitrise du son de pulseaudio, installer pavu-control
@@ -518,5 +565,11 @@ this is the standard web server address:
 The `.stignore` file is the file where you can specify which files not to synchronise.
 
 To run a web Gui of syncthing, run: `syncthing -browser-only`
+
+The first synchronization will take long ast it will synchronize most of the data as on each machine it will take the first scan as reference, and the first scan on each machine isn't performed at the same time.
+Also on one computer I would end-up with a syncthing panic and recurrent shutdown of syncthing during the first synchronization.
+My method to avoid that:
+- only add one shareed folder at a time and let it synchronize.
+- Also keep the reference machine in a "send only" mode during the initial synch to avoid the different machine to rescan their folder in between and mess up with the sync.
 
 

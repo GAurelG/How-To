@@ -100,6 +100,14 @@ I will use a reverse tunneling from the raspberry pi on the server and make it t
 I will have to manage to send emails once the script is finished to 
 inform myself in case of a problem.
 
+- remove all backups except the last full and the incremental
+
+    duplicity remove-all-but-n-full 1 file:///path/to/backup
+
+- remove all incremental except for the last full backupsand set of incrementals:
+    
+    duplicity remove-all-inc-of-but-n-full 1 file:///path/to/backup
+
 ## Raspberry pi set-up
 
 I choose raspbian lite as a base, did the normal installation. I decided to use
