@@ -95,3 +95,14 @@ git pull remote_name local_branch
 
 to push or pull from a branch with a different name:
 git push origin localBranchName:remoteBranchName
+
+## moving a git repo one level down in the directory tree:
+
+- do one commint before starting the operation
+- then `mv .git subDir/`
+- move also everything in the upper level that should be in the repo
+- `cd subDir/`
+- `git init .`
+- `git add .`
+- `git commit -m "message"`
+- then can push to origin if necessary. 
