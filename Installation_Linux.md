@@ -307,6 +307,17 @@ I also removed the id_rsa.. public and private keys.
 ### sshfs
 
 For the backups I discovered sshfs. You need to have 
+the following line shows an example of an fstab row for an sshfs mount. The x-systemd.automount option can be used on all mount to make the filesystem automount when it is available. It can be useful for external hard drive.
+
+`serverUser@server.address:/ /home/backaurel/mntAlbatros fuse.sshfs defaults,_netdev,allow_other,reconnect,x-systemd.automount,noauto,IdentityFile=/home/backaurel/.ssh/id_rsa 0 0`
+
+To make a simple mount, create the directory to mount in `sudo mkdir /mnt/whatever`
+Then mount the sshfs onto it: `sudo sshfs user@server:/ /mnt/whatever/`
+
+we can use an ssh key for login: `sudo sshfs -o IdentityFile=~/.ssh/keyfile /mnt/whatever/`
+
+The Archwiki for the fstab and sshfs are good ressources.
+
 
 ### Kdump
 
