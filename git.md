@@ -52,7 +52,7 @@ in the `.git/config` file add a section:
     ```
     [branch "master"] #the branch name
     remote = origin # the remote branch name
-    merge = refs/head/master
+    merge = refs/heads/master
     ```
 
 ## Ignore files:

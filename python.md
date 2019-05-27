@@ -6,7 +6,9 @@ This is a test, complete when more used
 
 ### create a directory:
 
-For my own organization I would create the directory in `/home/aurelien/Python/Virtualenv/VIRTUALENV_FOLDER/`
+For my own organization I would create the directory in `/home/aurelien/Python/Virtualenv/VIRTUALENV_FOLDER/` (actually changed but get the idea)
+
+if using with git, can create a higher level directory to hold the virtualenvironment subdirectory and the scripts in the higher level
 
 ### create a virutal environment:
 
@@ -15,6 +17,7 @@ For my own organization I would create the directory in `/home/aurelien/Python/V
     + then on the directory already created: `virtualenv DIRECTORY_NAME`
 2. Python 3:
     + already in the python standard library
+    + but need to install python3-venv on ubuntu 18.04
     + `pyvenv DIRECTORY_NAME`
 
 ### Working in a Virtual environment:
