@@ -420,6 +420,16 @@ look into the snap interfaces ... and the snap connect ... commands to manage it
 - tilda?
 - samba?
 - Jupyter-notebook (ne pas oublier jupyter-nbconvert pour pouvoir exporter)
+to install jupyter notebook, do it in a virtual environment.
+
+```
+pip install jupyter
+```
+
+To output pdf, you will need to install the `texlive` and `texlive-xetex`.
+Also on ubuntu you might need to install `texlive-generic-recommended`
+and pandoc might also be necessary (even if it isn't pandoc is good to have installed)
+
 - BleachBit?
 
 ### Conky:
