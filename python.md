@@ -33,6 +33,16 @@ if using with git, can create a higher level directory to hold the virtualenviro
 - **Exit** the virtual environment:
     
     `deactivate`
+### installing packages in the environment:
+
+Once the virtual environment has been created, activate it. then run your normal: `pip install PACKAGE`
+You should be able to see the packages in the virtualenvironment/lib/python3.X/site-packages/ .
+Another usefull thing is the possibility to use a text file with pip to install several packages at once.
+
+To create the file, redirect the output of `pip freeze` into a file, I will name it "requirements.txt" but it could be anything.
+The command is: `pip freeze > requirements.txt` 
+
+then in the new virtual environment run `pip install -r requirements.txt`
 
 ### Loading modules:
 
