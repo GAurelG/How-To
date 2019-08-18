@@ -67,6 +67,18 @@ in a `.gitignore` file to list all excluded files in sub directories.
 
 The `.gitignore` file have to be commited to the git repository
 
+If you forgot to use gitignore before you add files, you will need to do:
+
+    ```
+    create gitignore and fill it
+    git rm -r --cached #remove all added (but not commited files
+    git add .gitignore
+    git commit -m "gitignore added"
+    git status
+    ```
+
+after that,  you shouldn't get the new files you don't want.
+
 ### Second method
 
 To make a list that will not be included in remote repository use the `.git/info/exclude` file. Use the same syntax that for the `.gitignore` file.
@@ -106,3 +118,7 @@ git push origin localBranchName:remoteBranchName
 - `git add .`
 - `git commit -m "message"`
 - then can push to origin if necessary. 
+
+## remove files from the git tree (but not the local filesystem):
+
+    `git rm file.txt`
