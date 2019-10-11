@@ -593,4 +593,9 @@ My method to avoid that:
 - only add one shareed folder at a time and let it synchronize.
 - Also keep the reference machine in a "send only" mode during the initial synch to avoid the different machine to rescan their folder in between and mess up with the sync.
 
+# Interresting software:
+
+command line interactive disk usage tool:
+
+ - ncdu
 
