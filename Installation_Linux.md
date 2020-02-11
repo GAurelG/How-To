@@ -247,10 +247,10 @@ Pour transférer Evolution d'un ordinateur à un autre il faut utiliser le plugi
 ### SSH:
 
 enplacement personnel des info ssh: /home/aurelien/.ssh/
-créer un clée: ssh-keygen -t rsa -C "username@address.server.something"
+créer une clé: ssh-keygen -t rsa -C "username@address.server.something"
 elle sera sauvegardée sous: /home/aurelien/.ssh/id_rsa	et id_rsa.pub
 on peut avoir plusieurs clé ssh, pour cela, les enregistrer sous d'autres nom de fichier.
-La clé privvée est personnelle et doit être conservée et pas partagée.
+La clé privée est personnelle et doit être conservée et pas partagée.
 La clé publique (celle contenue dans le fichier finissant par ".pub") est la clé qui 
 doit être transmise au serveur.
 
