@@ -18,7 +18,7 @@ if using with git, can create a higher level directory to hold the virtualenviro
 2. Python 3:
     + already in the python standard library
     + but need to install python3-venv on ubuntu 18.04
-    + `pyvenv DIRECTORY_NAME`
+    + `python3 -m venv DIRECTORY_NAME`
 
 ### Working in a Virtual environment:
 
