@@ -58,6 +58,7 @@ B) for AMD CPU:
 
     `iommu=pt iommu=1 amd_iommu=on`
 
+it looks like: GRUB_CMDLINE_LINUX_DEFAULT="quiet splash iommu=pt iommu=1 amd_iommu=on"
 save file (ctrl + x, y, ENTER) and run:
 
     `update-grub`
