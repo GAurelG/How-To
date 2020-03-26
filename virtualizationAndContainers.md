@@ -368,3 +368,51 @@ To connect to the instance later, just do it as usual. you can use psql or other
     - `docker start d9b100f2f636`: the number is the containerID found when doing ps. This command starts stopped containers
     - `docker stop sharp_volhard`: can use contqinerID or nqme to stop containers
     - `docker rm festive_williams`: remove an installed container
+
+## Tips for virtualization:
+
+- Mobo: ASrock Taichi X370
+- CPU ryzen 7 1800X
+
+With this combination the Bios after version 5.10 supporting the first generation of ryzen CPU (Bios 5.60 and 5.50) have a bug in the AGESA (microcode from AMD included in the BIOS) that isn't allowing GPU passthrough.
+The bug makes it looks like everything is going as intended with the passthrough, but the GPU never output any picture for the VM.
+To get the BIOS to the required version (5.10) I had to downgrade the BIOS.
+This operation isn't officially supported through the BIOS tools because ASrock doesn't want people to downgrade and lose the support for 3rd generation ryzen in case they only have a 3rd gen ryzen.
+The downgrade method I will present is only working for BIOS made by AMI (American Megatrends Inc).
+I will use the excellent video from  [Spaceinvader One, How to Downgrade an AMD Bios & Agesa](https://www.youtube.com/watch?v=ZzqwjVDKAnU)
+You will find the appropriate software in the bios downgrade zip folder.
+You also need the BIOS file currently installed on the machine and the one you want to downgrade to. go and find it on the motherboards website.O
+
+1. unzip the downgrade.zip folder
+2. unzip/extract the files for the BIOS you got on the motherboard website
+3. rename the BIOS currently installed to "existingbios.rom"
+4. rename the BIOS you want to downgrade to "bios.rom"
+5. copy both renamed BIOS files into the extracted "downgrade bios" folder. you should copy them to:
+    ```
+    downgrade bios/EFI/BOOT/
+    ```
+6. format the USB flash drive you will use to use a GPT partition using a fat32 partition. (I used gnome disks)
+7. copy the folder "EFI/" from inside the biosdowngrade folder, to the root of the USB flash drive (the flash drive should contain only the EFI/ folder and subsequent folders.
+8. put the flash drive into the machine and start it into the BIOS
+9. from the BIOS boot using the flash drive. There might be two flash drive listed, choose the one with UEFI in front of it
+10. you should end up into a shell. If not, there should be a thing that ask to press any keys, then PRESS ANY KEYS!!! otherwise you will turn in circles.
+11. then move to the flash drive, it should be listed as "fs..." I had to use the command:
+    ```
+    cd fs0:
+    ```
+12. to check I am in the right device, do `ls` and you should see the EFI and other folder inside
+13. `cd EFI`
+14. `cd BOOT`
+15. check we are in the right folder using the `ls command`
+16. do a dry-run to check that we are on the right tracks, to do so follow the next steps.
+17. `AfuEfix64.exi existingbios.rom /D`
+18. at the end of the Dry-run everything should say either **done** or **ok**. If it doesn't and you get some kind of an error, then you need to check that the BIOS files are what you think they are! maybe even download them again.
+19. If everything went well, then we can do a dry run for the downgrade BIOS.
+20. `AfuEfix64.exi bios.rom /D`
+21. You will get a warning message saying that the ROM file doesn't match the BIOS and ask if we want to continue. we say "yes"
+22. at the end of the dry run, everything should look with some "ok" or "enabled" status.
+23. now we will do it for real!
+24. `AfuEfix64.exi bios.rom /P /B /N /K /X`
+25. you should get the same warning as in the dry-run. say yes to continue
+26. after it finishes, restart the computer and go into the bios. if everything went fine, you should get to the bios, and the version should be the downgraded bios version.
+27. In the BIOS, you need to re-check all configuration, as the BIOS downgrade reset all options in the BIOS.

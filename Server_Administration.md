@@ -115,7 +115,7 @@ anyone connecting to the server on the specified port could be binded to local p
 more info about ssh tunneling:
 https://www.ssh.com/ssh/tunneling/example
 https://chamibuddhika.wordpress.com/2012/03/21/ssh-tunnelling-explained/
-# the chamibuddhika.wordpress is a really goo document, I need to get it as a PDF for offline reference.
+# the chamibuddhika.wordpress is a really good document, I need to get it as a PDF for offline reference.
 # see the [reference_pdf](SSH_tunneling_nice_reference.pdf)
 
 this tells SSH to link the port 22345 (can be any port between 1024 and 65535 not used) on the remote to
