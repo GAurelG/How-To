@@ -56,20 +56,13 @@ change the disk and still get encrypted backups using the same passcode...
 The strategy:
 
     - a raspberry pi with external storage running at home
-    - The raspberry pi would ssh to the server and open a reverse tunnel
-    - The server would backup, and send the backup over the network
-to be stored on the Hard drive attached to the raspberry pi.
-    - I need to be informed if an error pop up during backup
-    - I will need a way to handle changing hard drive to store one in remote
- location
-    - The job should probably be triggered using either a cron job or
+    - access to the nextcloud server for the raspberry pi 
+    - backup of the nextcloud data to the storage attached to the raspberry pi
+    - The job can be scheduled using either a cron job or
 a systemD timer. Advantage of the timer being that it will be retried if 
 the machine was off at the time it should've acted I think.
     - The raspberry pi should not be always connected to the server to
 reduce the time window the different ports are open
-    - The raspberry pi should probably trigger the backup to avoid the
-failure of it due to the remote end point being anavailable (internet 
-or electricity outage at home)
 
 ## The software stack
 
@@ -95,42 +88,66 @@ necessary to remove backups
 
     - --encrypt-key to use the GpG encryption.
 
-I will use a reverse tunneling from the raspberry pi on the server and make it trigger a backup script.
+I will use an sshfs connection from the raspberrypi to the nextcloud server to have
+ "local" access to the nextcloud data from the raspberry pi for the backup.
+It might not be the most performing solution, but it is good enough for my scale.
 
-I will have to manage to send emails once the script is finished to 
-inform myself in case of a problem.
+    - remove all backups except the last full and the incremental
 
-- remove all backups except the last full and the incremental
+    `duplicity remove-all-but-n-full 1 file:///path/to/backup`
 
-    duplicity remove-all-but-n-full 1 file:///path/to/backup
-
-- remove all incremental except for the last full backupsand set of incrementals:
+    - remove all incremental except for the last full backupsand set of incrementals:
     
-    duplicity remove-all-inc-of-but-n-full 1 file:///path/to/backup
+    `duplicity remove-all-inc-of-but-n-full 1 file:///path/to/backup`
 
 ## Raspberry pi set-up
 
-I choose raspbian lite as a base, did the normal installation. I decided to use
- the graphical set-up tool to expand the partition to the full SD card and also
- to set up the keyoard to french layout. I tried to look around a bit, but it 
-was taking some time and not really successful at the time.
+Second Iteration using a raspberry pi 4 for the faster ethernet and usb bus.
+I am also now using an ansible playbook for most of the set-up. it was successfully
+tested for reproducability several times.
 
-Once the card is fully set-up, I should do a img of the card so that I can
-restore the raspberrypi fast in case of SD card failure.
-I could also look into making an ansible playbook or similar type of configuration
- management tool.
+Steps before the ansible script:
+  1. download the ubuntu ISO
+  2. flash the ISO on the SD card. I used gnome disks.
+  3. extend the partitions on the SD card (also done using gnome disks)
+  4. if I need wifi then configure netplan:
+	`sudo cp /usr/share/doc/netplan/example/wireless.yaml /etc/netplan/`
+        `sudo vim /etc/netplanwireless.yaml`
+     tip: add `optional: true` below the `dhcp4: true` line
+     need to rename the wireless interface as ubuntu is using wlan0 name and not the
+     same standard as the example in the file.
+  5. add OpenSSH and enable it using ufw:
+        ```
+        sudo ufw allow OpenSSH
+        sudo ufw enable
+        sudo ufw status
+        ```
+  6. update if want to and reboot the raspberry pi
+  7. from main machine, add ssh key on the raspberry pi:
+    `ssh-copy-id -i ~/.ssh/key.pub username@remote`
+  8. if needed edit `~/.ssh/config` on the main machine to add an entry for the 
+     raspberry pi and change `~/.ssh/known_hosts` to remove older entry with the same
+     hostname to avoid the "possible man in the middle attack!" warning message at the 
+     first ssh connection.
+  9. try to ssh on the raspberrypi using the ssh key.
+  10. adjust the ssh parameters of the ssh daemon on the raspberry pi:
+      `sudo vim /etc/ssh/sshd_config`
+      change the parameters to:
+      `PermitRootLogin no`
+      `PasswordAuthentical no`
+  11.  reboot and test the ssh connection with the new parameters
+  12. run the ansible playbook:
+      `ansible-playbook playbook.yaml --ask-vault-pass`
+  13. shut down the raspberry pi manually,
+       plug it in the rooteur, the hard drive and turn it on.
+  14. test if the sshfs is mounted and if the harddrive is accessible.
+  15. when connecting to the raspberry pi via ssh, there might be a dns problem with
+      the routeur if you re-build the raspberry pi several times for tests purposes.
+      Use the routeur interface to check if the routeur is actually up and connected.
+      Do not rely on pinging the hostname. Or don't be lazy and run your own DNS server.
+  16. can also add ssh keys from other devices that needs access to the raspberrypi.
 
-Steps done on the pi:
-    - change default password
-    - create another user
-    - set-up ufw firewall
-    - install SSH server
-    - set-up ssh connection using key from different machines
-    - create a new user only for backups, without sudo rights
-    - create an ssh key for this user
-    - upload the key on the server to make the autentication possible
-
-## Server set-up
+## nextcloud server set-up
 
  I created a new user to do the backup. It is an account without home or
 administrative rights.
