@@ -599,3 +599,7 @@ command line interactive disk usage tool:
 
  - ncdu
 
+### making a stress test:
+
+install the stress package and use it
+
