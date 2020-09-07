@@ -80,10 +80,12 @@ lowvalue data it should be efficient enough.
 , every other backups should be incremental: D for days, M for month
 
 Other options I will/could use:
+
     - --include /directory  I can use several inclue parameters on one command
     - --exclude /directory  same as include, can use several one
     - --remove-older-than <time> [-force] <url_path_backups>
     - --remove-all-but-n-full <time> [-force] <url_path_backups> the force option is
+    
 necessary to remove backups
 
     - --encrypt-key to use the GpG encryption.
@@ -107,37 +109,50 @@ I am also now using an ansible playbook for most of the set-up. it was successfu
 tested for reproducability several times.
 
 Steps before the ansible script:
+
   1. download the ubuntu ISO
   2. flash the ISO on the SD card. I used gnome disks.
   3. extend the partitions on the SD card (also done using gnome disks)
   4. if I need wifi then configure netplan:
-	`sudo cp /usr/share/doc/netplan/example/wireless.yaml /etc/netplan/`
+  
+        `sudo cp /usr/share/doc/netplan/example/wireless.yaml /etc/netplan/`
         `sudo vim /etc/netplanwireless.yaml`
+        
      tip: add `optional: true` below the `dhcp4: true` line
      need to rename the wireless interface as ubuntu is using wlan0 name and not the
      same standard as the example in the file.
   5. add OpenSSH and enable it using ufw:
-        ```
-        sudo ufw allow OpenSSH
-        sudo ufw enable
-        sudo ufw status
-        ```
+  
+      ```
+      sudo ufw allow OpenSSH
+      sudo ufw enable
+      sudo ufw status
+      ```
+      
   6. update if want to and reboot the raspberry pi
   7. from main machine, add ssh key on the raspberry pi:
+  
     `ssh-copy-id -i ~/.ssh/key.pub username@remote`
+    
   8. if needed edit `~/.ssh/config` on the main machine to add an entry for the 
      raspberry pi and change `~/.ssh/known_hosts` to remove older entry with the same
      hostname to avoid the "possible man in the middle attack!" warning message at the 
      first ssh connection.
   9. try to ssh on the raspberrypi using the ssh key.
   10. adjust the ssh parameters of the ssh daemon on the raspberry pi:
+  
       `sudo vim /etc/ssh/sshd_config`
+      
       change the parameters to:
+      
       `PermitRootLogin no`
       `PasswordAuthentical no`
+      
   11.  reboot and test the ssh connection with the new parameters
   12. run the ansible playbook:
+  
       `ansible-playbook playbook.yaml --ask-vault-pass`
+  
   13. shut down the raspberry pi manually,
        plug it in the rooteur, the hard drive and turn it on.
   14. test if the sshfs is mounted and if the harddrive is accessible.
@@ -153,6 +168,7 @@ Steps before the ansible script:
 administrative rights.
 
 Steps done:
+
     - `sudo adduser --no-create-home save-user` this creates a new user and
  group without home
     - `sudo usermod -a -G save-user myUser` this adds (-a) the group (-G)
