@@ -4,196 +4,91 @@ I will write information about virtual machines, container (maybe snaps, docker.
 
 ## KVM
 
-It is important to check if the hardware is able to support virtualization, and if it is enabled in the BIOS.
-Then we install lib-virt qemu and the qemu-kvm package to have the hardware acceleration:
-
-    ```
-    sudo apt-get install qemu-kvm libvirt-bin bridge-utils virt-manager
-    sudo adduser name libvirtd
-    ```
-
-The second step is necessary if the user isn't in the virtd group as it blocks you froom actually running virtualization
-software.
-You might have to create the group before adding a user to it:
-   `sudo addgroup libvirtd`
-
-As we installed the GUI tool 'virt-manager' we can use that to create virtual machine.
-
-## Creating Windows VM with GPU pasdsthrough on ubuntu 18.04
-
-This is a copy of the excellent guide at Level 1 tech forum. I might make some modification once I encounter corner cases.
-https://forum.level1techs.com/t/elementary-os-5-0-ubuntu-18-xx-vfio-pcie-passthrough-guide-tutorial/131420
-
-### Virtualization
+### Prerequisites:
 
 - make sure you have vt-d/vt-x/svm or “virtualization” enabled (and your CPU supports it) in your BIOS/UEFI. On my setup, it was called SVM (Secure Virtual Machine)
+
+if you want to use the PCI passthrough technology :
+
+
+It is important to check if the hardware is able to support virtualization, and if it is enabled in the BIOS.
+
 - make sure you have IOMMU enabled (and your board supports is) in BIOS/UEFI. On my setup it was under “chipset” tab simply called IOMMU
-- Install Virt-manager and following packages
 
-`sudo apt-get install virt-manager qemu-kvm ovmf`
+### Software to install
 
-installation may take a while
-don’t try to run virt-manager directly after install, it will most probably end up throwing error at you.
-
-reboot
-
-After you rebooted, open virt manager (should be in list of your installed apps). It should start without any error giving you nice tiny window.
-*If you encounter some errors, just google your way out of it, may be missing some packages or having wrong user rights*
-
-There might be a need to enable iommu in GRUB I see IOMMU groups without editing GRUB on KDE Neon
-
-### Enable IOMMU in GRUB
-
-Most Linux distros do not enable IOMMU by default.
-You will need to update your grub bootloader config to support IOMMU.
-
-    `sudo nano /etc/default/grub`
-
-and add following to the `GRUB_CMDLINE_LINUX_DEFAULT` line:
-A) for Intel CPU:
-
-    `iommu=pt iommu=1 intel_iommu=on`
-
-B) for AMD CPU:
-
-    `iommu=pt iommu=1 amd_iommu=on`
-
-it looks like: GRUB_CMDLINE_LINUX_DEFAULT="quiet splash iommu=pt iommu=1 amd_iommu=on"
-save file (ctrl + x, y, ENTER) and run:
-
-    `update-grub`
-
-REBOOT
-
-### Check if IOMMU is working
-
-it is a good idea to check to see that IOMMU grouping is working properly. This script from Wendell will help you:
+There are several way to install the packages we want.
+In the end we want to create virtual machines using QEMU with KVM and to manage it graphically we want to use virt-manager.
 
     ```
-    cd ~
-    nano iommu-check.sh
+    sudo apt-get install virt-manager qemu-kvm ovmf
     ```
+    
+This should pull the required additional packages.
+Reboot and you should be able to open the software "virt-manager".
+In case it doesn't open, there might be privilege problem.
+Check your user is part of the `libvirt` (`$groups` should list libvirt). If it isn't, you will have to add your user to the group. you might also have to create the group.
 
-and copy following:
+## Set-up PCI passthrough for GPU on ubuntu 20.04
+
+### IOMMU groups:
+
+IOMMU should be enabled in the BIOS.
+
+Check the ID and the groups of the different devices, use the following script:
 
     ```
     #!/bin/bash
     for d in /sys/kernel/iommu_groups/*/devices/*; do
-      n=${d#*/iommu_groups/*}; n=${n%%/*}
-      printf 'IOMMU Group %s ' "$n"
-      lspci -nns "${d##*/}"
+    n=${d#*/iommu_groups/*}; n=${n%%/*}
+    printf 'IOMMU Group %s ' "$n"
+    lspci -nns "${d##*/}"
     done
     ```
 
-save and exit.
+With this, you should be able to get the ID os the component you want to passthrough.
+For only a list of devices with ID without the IOMMU group information, you can run:
 
-then run:
+   ```
+   lspci -nnv | less
+   ```
+and search for the appropriate line.
 
-    `sh iommu-check.sh`
+The next steps are easy because we have GPU with different ID's
 
-Now you need to find your 2 GPUs (including their audio interfaces).
-
-Possible edge case scenarios:
-A) GPUs are sharing same group, or IOMMU is not working, follor this guide:
-    https://forum.level1techs.com/t/elementary-os-5-0-beta-vfio-pcie-passthrough-guide-tutorial/131420/17
-B) cards with identical IDs (for example, my RX580 and 570 have same ID).
-
-I avoided these cases and will not document them.
-
-
-
-### Assigning VFIO driver to a GPU
-
-**FOLLOW THIS STEP ONLY OF YOUR GPUs HAVE DIFFERENT PCI IDs**
-
-otherwise use workaround from this guide: https://forum.level1techs.com/t/vfio-in-2019-pop-os-how-to-general-guide-though-draft/142287 4
-
-We are ready to setup our devices to be used inside a virtual machine.
-To do this, we must bind the vfio-pci driver to the device(s) we want to pass through to the virtual machine, and this is most easily done by PCI device ID.
-In my case PCI device IDs of my Nvidia 450 and its audio interface are:
-[10de:0dc4] and [10de:0be9]
-
-To get around system using its own Nvidia (or AMD) driver. Wendell wrote us yet again nice tiny guide.
-But first, you have to check, which driver is used for your GPU:
-run:
-
-     `lspci -nnv |less`
-
-and finda GPU you want to pass in the list:
-
-Notice the Kernel driver in use is nvidia. Thats what you have to use while editing following config file
-
-    `sudo nano /etc/initramfs-tools/modules`
-
-and add following lines at the end of file.
-Replace nvidia on first and last line, if your kernel driver in use is different. Replace your PCI IDs with the GPU and its audio interface you want to use for virtual machine. Example:
+IOMMU should also be enabled in `GRUB` (there are other way to do it with systemd-boot or other bootloaders).
 
     ```
-    softdep nvidia pre: vfio vfio_pci
+    sudo vim /etc/default/grub
+    ```
     
-    vfio
-    vfio_iommu_type1
-    vfio_virqfd
-    options vfio_pci ids=10de:0dc4,10de:0be9
-    vfio_pci ids=10de:0dc4,10de:0be9
-    vfio_pci
-    nvidia
+    edit the paramter row `GRUB_CMDLINE_LINUX_DEFAULT`
+    
+    - edit the file and add the amd_iommu or intel_iommu depending on your CPU manufacturer.
+    - add the kvm.ignore_msrs=1 should help avoid some random problems in the VM by stopping KVM from handling MSRs
+    - add iommu=pt to stop linux from touching devices that can't be passed through (not mandatory)
+    - add vfio-pci.ids= matching the ID found with the above script for the GPU and the audio interface of the GPU. As these comments pass kernel parameters to linux, we will not have access to the GPU we are giving the IDs in the linux session. TO have access we would need to use hooks at the starts and ends of a VM session. see (https://github.com/bryansteiner/gpu-passthrough-tutorial)[https://github.com/bryansteiner/gpu-passthrough-tutorial]
+
+    for AMD CU you get: `GRUB_CMDLINE_LINUX_DEFAULT=quiet splash amd_iommu=on kvm.ignore_msrs=1 vfio-pci.ids=XXXX:XXXX,XXXX:XXXX`
+    then update grub:
+    
     ```
-
-save and exit.
-Now edit:
-
-    `sudo nano /etc/modules`
-
-and add following and don’t forget to change IDs again
-
+    sudo update-grub
     ```
-    vfio
-    vfio_iommu_type1
-    vfio_pci ids=10de:0dc4,10de:0be9
+    
+    - reboot
+    
+- Check that everything worked, run:
+    
     ```
+    lspci -nnv | less
+    ```
+if everything went well, the driver for the appropriate GPU should read something like `vfio-pci`
 
-save and exit
+    
+### Configuring AppArmor (optional)
 
-We will also create explicit configurations for the modules in `/etc/modprobe.d`
-A) for AMD GPU:
-
-    `sudo nano /etc/modprobe.d/amdgpu.conf `
-
-and add following:
-
-    `softdep amdgpu pre: vfio vfio_pci`
-
-B) for NVIDIA GPU
-
-    `sudo nano /etc/modprobe.d/nvidiagpu.conf `
-
-and add following:
-
-    `softdep nvidia pre: vfio vfio_pci`
-
-even more configs to edit!
-    `sudo nano /etc/modprobe.d/vfio_pci.conf`
-
-and add following: *REPLACE IDS*,**AGAIN**
-
-    `options vfio_pci ids=10de:0dc4,10de:0be9`
-
-then run:
-
-    `sudo grub-mkconfig; sudo update-grub; sudo update-initramfs -k all -c`
-
-REBOOT AND PRAY
-
-after reboot run:
-
-     `lspci -nnv |less`
-
-and look for GPU you want to pass to a VM.
-
-If all went well, it should be using `vfio-pci` driver now
-
-### Configuring AppArmor
+Depending on the situation, AppArmor might block us from running the VM with passthrough. In case of a problem this section might be needed.
 
 Before we setup our virtual machine, we need to deal with AppArmor first. App Armor, in a nutshell, prevents programs from doing suspicious things.
 
@@ -224,7 +119,19 @@ restart AppArmor with:
 
 any issues with AppArmor can be found in /var/log or run dmesg and watch for errors related to virtualization
 
-### Setting up VM
+## Setting up VM
+
+### setting the storage pool
+
+In case we want to use a different location as storage pool we need to set this up.
+By default Virtmanager should have connected to the default QEMU/KVM session.
+1. right click on the connection
+2. click "edit"
+3. storage tab
+4. add storage, you can point to already existing storage location to later import existing VM
+
+### setting a windows VM
+
 
 Start Virtual Machine Manager and create new VM file -> new virtual machine
 

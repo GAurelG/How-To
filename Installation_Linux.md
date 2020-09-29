@@ -244,79 +244,10 @@ soit lancer la commande: sudo nvidia-xconfig --no-logo et ça se fait tout seul.
 
 Pour transférer Evolution d'un ordinateur à un autre il faut utiliser le plugin "backup and restore".
 
-### SSH:
+### SSH & sshfs
 
-enplacement personnel des info ssh: /home/aurelien/.ssh/
-créer une clé: ssh-keygen -t rsa -C "username@address.server.something"
-elle sera sauvegardée sous: /home/aurelien/.ssh/id_rsa	et id_rsa.pub
-on peut avoir plusieurs clé ssh, pour cela, les enregistrer sous d'autres nom de fichier.
-La clé privée est personnelle et doit être conservée et pas partagée.
-La clé publique (celle contenue dans le fichier finissant par ".pub") est la clé qui 
-doit être transmise au serveur.
+See (ssh docs)[./ssh_info.md]
 
-Sur le serveur: créer un dossier /home/server_user/.ssh/ et lui mettre les droits: 700 
-Créer le fichier "authorized_keys" dans ce dossier et coller la clé publique.
-coller la sortie de cat /home/aurelien/id_rsa.pub (ou la clé à utiliser).
-
-Sur le serveur, on doit aussi changer la configuration /etc/ssh/sshd_config
-retirer la possibilité d'utiliser un mot de passe et empêcher l'accès root.
-mettre la possibilité d'utiliser le XForwarding
-
-Pour utiliser plusieurs clé ssh il faut en générer plusieurs dans différents fichier.
-Ensuite mettre la clé publique correspondant à chaque service à utiliser.
-Il faut ensuite créer le fichier: /home/aurelien/.ssh/config 
-exemple de remplissage pour github et bitbucket:
-
-Host nomd'hôte  
-#hostname will be used to complete the ssh command, can be anything we want (but no user@ in it)
-#can put several synonyme if we separate them with space. Can also use wildcards
- HostName github.com
- User git
- IdentityFile ~/.ssh/id_rsa_github
-
-Host nomd'hôte
- HostName bitbucket.org
- User git
- IdentityFile ~/.ssh/id_rsa_bibucket
-
-doing so, allow us to use ssh nomd'hote instead of ssh user@HostName. 
-
-to add a key to the ssh-agent (for example if it was newly created and you have to copy it
-from another location because you type the wrong path like a stupid person):
-
-    ```$ssh-add /path/to/ssh/id_rsa...```
-
-In my case it didn't add the key permanently to the user agent, so I had to add the host in the 
-.ssh/config file (like explained previously).
-
-Once I created the new key on another computer, i copied the id_rsa.pub file
-containing the public ssh key to the computer that ad the ssh access already set up.
-I then ran the ssh-copy-id command, but got an error because the key wasn't created on the 
-computer so I had to use the -f (for force) option. it worked well.
-    ```ssh-copy-id -f -i /path/to/key user@hostname```
-
-On se connecte en faisant: ssh -T git@nomd'hôte
-A voir comment ça fonctionne correctement!
-A voir comment on détermine le User dans le fichier!
-
-To remove older hosts, one need to know their host name (what was used in the ssh command).
-then you can use the command:
-    ```ssh-keygen -R hostname [-f filenameOfKnownHosts]```
-I also removed the id_rsa.. public and private keys.
-
-### sshfs
-
-For the backups I discovered sshfs. You need to have 
-the following line shows an example of an fstab row for an sshfs mount. The x-systemd.automount option can be used on all mount to make the filesystem automount when it is available. It can be useful for external hard drive.
-
-`serverUser@server.address:/ /home/backaurel/mntAlbatros fuse.sshfs defaults,_netdev,allow_other,reconnect,x-systemd.automount,noauto,IdentityFile=/home/backaurel/.ssh/id_rsa 0 0`
-
-To make a simple mount, create the directory to mount in `sudo mkdir /mnt/whatever`
-Then mount the sshfs onto it: `sudo sshfs user@server:/ /mnt/whatever/`
-
-we can use an ssh key for login: `sudo sshfs -o IdentityFile=~/.ssh/keyfile /mnt/whatever/`
-
-The Archwiki for the fstab and sshfs are good ressources.
 
 
 ### Kdump
@@ -509,30 +440,22 @@ need to put several GB, but need a bit more RAM.
 
 ### mots de passe:
 
-utiliser keepassX
-
-### Gestion clé GPG
-
-### Chiffrement du disque
+utiliser keepassXC keepassX or bitwarden
 
 ### Virtualisation
 
-### Accès à distance
+see (virtualizationAndContainers.md)[virtualizationAndContainers.md] document.
+
 
 ### Additional fonts
 
 sudo apt install `ttf-mscorefonts-installer`
+ou copier les polices depuis linux/windows dans `/usr/share/fonts`
+font I liked for my conky: amaze et janda cheerful
 
 ### hp printer
 
 install "hplip"
-
-### Polices:
-
-Installer ttf-microsoft
-copier les polices intéressantes de /usr/share/fonts (surtou les amaze et janda cheerful)
-il y en a aussi dans ~/.fonts/
-Ajouter les polices microsoft et autres polices
 
 ### Telegram:
 
