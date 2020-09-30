@@ -85,6 +85,9 @@ IOMMU should also be enabled in `GRUB` (there are other way to do it with system
     ```
 if everything went well, the driver for the appropriate GPU should read something like `vfio-pci`
 
+It is possible that the bot time becomes quite long if you are trying to passthrough an Nvidia card and you have the Nviodia drivers installed.
+This is due to a bug in the Nvidia drivers that don't like to be not assigned to the GPU. To mitigate this, use the `nouveau` driver.
+
     
 ### Configuring AppArmor (optional)
 
@@ -130,13 +133,13 @@ By default Virtmanager should have connected to the default QEMU/KVM session.
 3. storage tab
 4. add storage, you can point to already existing storage location to later import existing VM
 
-### setting a windows VM
-
+### setting a *new* windows VM
 
 Start Virtual Machine Manager and create new VM file -> new virtual machine
 
 Select your installation method - most probably from local media.
 Continue and select .ISO file you want to install from.
+If you can't access the location of the ISO it could be because the ISO isn't in one of the storage location.
 
 Windows 10 ISO can be downloaded here:
 
@@ -146,53 +149,47 @@ On next screen you can assign CPU threads and amount of RAM your VM will be give
 
 Next you will be asked for maximum storage size of your VM
 
-Now you’re on last screen make sure to check customize configuration before install
+Now you’re on last screen make sure to check customize configuration before install.
 
-continue, config window will pop up
+Continue, a configuration window will pop up.
 
-First, on Overview tab, we need to change Firmware to UEFI: dont forget to click Apply
+1. on Overview tab, we need to change Firmware to UEFI and boot loader to the i440FX: dont forget to click Apply
+2. in the CPU part, manually assigne the topology, for me it didn't represent the CPU in a good way. (1 socket, 8 cores, 2 thread)
+3. add devices if you want to pass USB devices
 
+#### Specific steps for the GPU passthrough:
 
-Remove Display Spice device
-Remove Video QXL device
-Remove Channel Spice
+You will need to remove the VM devices that are managing the video output and then add the GPU PCI device and the GPU audio PCIE device.
 
-Now click add hardware at the bottom.
-
-Window will pop up.
-
-Select PCI Host Device and add your GPU.
-Repeat this step to add your GPUs AUDIO interface as well
-
-Make sure you have monitor plugged in into your passed GPU
+1. Remove Display Spice device
+2. Remove Video QXL device
+3. Remove Channel Spice
+4. Now click add hardware at the bottom.
+5. A window will pop up.
+6. Select PCI Host Device and add your GPU.
+7. Repeat this step to add your GPUs AUDIO interface as well
+8. Make sure you have monitor plugged in into your passed GPU
 
 Click Begin installation on top and pray it f*cking works
 
-### Code 43 fix (Nvidia cards)
+#### Code 43 fix (passed through Nvidia cards needs it)
+
 
 You may need to edit your VM config manually, using virsh, if you have trouble with Nvidia being ass or for other specific changes.
+for me the symptomes were that while I got a graphical output, the GPU wasn't being recognised by the VM and I only got low resolution graphics.
 
-run:
-
-    `sudo virsh`
-
-then type
-
-    `edit win10`
-
-replace *win10* with your VM name. If you installed Windows 10 and did not edit its name, it should be that*
-
-you will be asked what editor you want to use, suggest selecting nano. Vim for hardcore oldschool dudes.
-
-Nice long config will fill your screen.
-
-find `hyperv` section and add following:
+1. run: `sudo virsh`
+2. `edit win10`
+3. replace *win10* with your VM name. If you installed Windows 10 and did not edit its name, it should be that*
+4. you will be asked what editor you want to use, suggest selecting nano. Vim for hardcore oldschool dudes.
+5. Nice long config will fill your screen.
+6. find `hyperv` section and add following:
 
     ```
     <vendor_id state='on' value='fknvidia'/>
     ```
 
-and add new section under features
+7. add new section under features
 
     ```
     <kvm>
@@ -200,13 +197,31 @@ and add new section under features
     </kvm>
     ```
 
-so it all looks like this: 
-
 this should get your around Nvidia code 43
 
 If your windows installation BSODs (well, reboots), try changing CPU topology from host-passthrough to lets say… EPYC (depends on your cpu model)
 
-Now let's hope it works. :)
+The VM should now start.
+
+### Importing a VM created on another computer/installation
+
+Keep in mind that all information attached to the VM has to be re-created aand isn't available and imported when migrating instance.
+
+1. install all the virtualisation tools like described above.
+2. if you use the qcow2format, put the qcow2 file of the VM into a storage pool accessible to KVM, you might have to create a new storage pool
+3. right click on the qemu/kvm connection
+4. select the `details` option
+5. `storage` tab
+6. add a pool selecting the wished location
+7. now we create a new VM
+8. select `import an existing image`
+9. follow the process
+10. before the end, select the `customize configuration before install`
+11. adjust the different parameter like you would do for a new VM (also the passthrough options and nvidia code 43).
+12. the type of operating system for Windows 10 might be difficult to find, you need to also show the one that are out of date.
+13. install the VM
+14. start the VM and hope it works.
+
 
 # Containers
 
