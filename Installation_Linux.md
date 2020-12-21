@@ -526,3 +526,6 @@ command line interactive disk usage tool:
 
 install the stress package and use it
 
+### pdf aranger not starting or python not starting
+
+it can happen that some python app don't like locale combination. To remove problem edit the launcher and add the variable: `LC_ALL=C`
