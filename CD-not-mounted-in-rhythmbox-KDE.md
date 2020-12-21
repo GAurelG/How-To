@@ -6,4 +6,3 @@ Rhythmbox needs the CD to be mounted using gvfs. KDE doesn't do it by default. I
     gio mount cdda://sr0
     ```
 
-/bin/bash: q : commande introuvable

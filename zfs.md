@@ -56,6 +56,8 @@ To make Syncoid do a daily synchronization of the datasets, I created a `syncoid
 
 - `sudo zfs mount`: list pool and dataset and their muontpoint
 - `sudo zfs set mountpoint=/SOMETHING/SOMETHING pool/dataset`: mount the dataset at /something/something
+- `sudo zfs get mountpoint pool/dataset`: list the mountpoint for different datasets
+- `sudo zfs get mounted pool/dataset`: list mounted datasets
 
 # link
 
