@@ -35,3 +35,44 @@ To do so, copy the template to have the same retention policy (change the name) 
 Syncoid is a command line tool, it has no automatically running job. To use it I do: `syncoid --no-sync-snap origin_pool/origin_dataset destination_pool/destination_dataset`
 the `--no-sync-snap` option is used to avoid new snapshots to be taken when I am only interrested in moving datasets with sanoid taking care of the snapshots.
 To make Syncoid do a daily synchronization of the datasets, I created a `syncoid.service` and a `syncoid.timer` to make this automatically. Both files have to be placed in `/etc/systemd/system/` and enabled and started.
+
+# transfert pool to other install
+
+1. export pool from old instance:
+    ```
+    sudo zpool export baleine
+    sudo zpool export elephant
+    ```
+2. check potential pool to import on new instance:
+    ```
+    sudo zpool import
+    ```
+3. import pools:
+    ```
+    sudo zpool import elephant
+    sudo zpool import baleine
+    ```
+# Manage mountpoint:
+
+- `sudo zfs mount`: list pool and dataset and their muontpoint
+- `sudo zfs set mountpoint=/SOMETHING/SOMETHING pool/dataset`: mount the dataset at /something/something
+
+# link
+
+Once dataset are mounted, I make link to specific folde in the home directory:
+- Documents
+- Musique
+- Musique_FLAC
+- Vidéos
+- Anime
+- Ansible
+- Archive
+- DVD
+- Téléchargements
+- ISO
+- Jeux_Rom
+- Livres
+- Modèles
+- Programation
+- Bureau
+
