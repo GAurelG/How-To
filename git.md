@@ -122,3 +122,20 @@ git push origin localBranchName:remoteBranchName
 ## remove files from the git tree (but not the local filesystem):
 
     `git rm file.txt`
+
+## add ssh authentication to github
+
+- add the ssh public keys in the github interface
+- test that you can access github: `ssh -T git@github.com`
+- if you get a message saying you authenticated, but github doesn't provide shell then continue. Otherwise try solving the problem.
+- add github in the $HOME/.ssh/config
+    ```
+    Host github.com
+        Hostname github.com
+        User git
+        IdentityFile /home/user/.ssh/something.pub
+    ```
+- go to each repository and change each remote origin url to the form `git@github.com:<username>/<project>.git`
+- you can also just change the `https://github.com/` part of the remote url.
+- to find the name of the remote origin you can either look into the `.git/config` file or run `git config --list` and find the remote line. you can also see the remote name to use in the next command.
+- `git remote set-url ORIGIN_NAME git@github.com:USER/REPO_NAME.git` the ORIGIN_NAME is usually "origin" but could be different if it was set-up differently
